@@ -9,7 +9,7 @@ export const PeoplePage = () => {
   const [people, setPeople] = useState<Person[]>([]);
   const [peopleError, setPeopleError] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [searchFail, setSearchFail] = useState(false);
+  // const [searchFail, setSearchFail] = useState(false);
 
   useEffect(() => {
     async function fetchPeople() {
@@ -35,9 +35,7 @@ export const PeoplePage = () => {
       <div className="block">
         <div className="columns is-desktop is-flex-direction-row-reverse">
           <div className="column is-7-tablet is-narrow-desktop">
-            {!loading && people && (
-              <PeopleFilters people={people} setPeople={setPeople} />
-            )}
+            {!loading && people && <PeopleFilters />}
           </div>
 
           <div className="column">
@@ -53,14 +51,12 @@ export const PeoplePage = () => {
                   There are no people on the server
                 </p>
               )}
-
+{/*
               {searchFail && (
                 <p>There are no people matching the current search criteria</p>
-              )}
+              )} */}
 
-              {people.length > 0 && !loading && (
-                <PeopleTable people={people} setSearchFail={setSearchFail} />
-              )}
+              {people.length > 0 && !loading && <PeopleTable people={people} />}
             </div>
           </div>
         </div>

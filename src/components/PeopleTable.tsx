@@ -93,7 +93,7 @@ export const PeopleTable: React.FC<Props> = ({ people }) => {
   const orderBy = searchParams.get('order');
   const queryParams = searchParams.get('query');
   const sex = searchParams.get('sex');
-  const centuries = searchParams.get('centuries');
+  const centuries = searchParams.getAll('centuries');
 
   let sortedPeople: Person[] = [...people];
 
@@ -140,13 +140,11 @@ export const PeopleTable: React.FC<Props> = ({ people }) => {
     sortedPeople = sortedPeople.filter(p => p.sex === 'f');
   }
 
-  if (centuries) {
-    const selectedCenturies = centuries.split(',').map(c => Number(c));
-
+  if (centuries.length > 0) {
     sortedPeople = sortedPeople.filter(p => {
       const century = Math.floor(p.born / 100) + 1;
 
-      return selectedCenturies.includes(century);
+      return centuries.includes(century.toString());
     });
   }
 
@@ -226,7 +224,10 @@ export const PeopleTable: React.FC<Props> = ({ people }) => {
             <td>
               {person.motherName ? (
                 <Link
-                  to={`#/people/${findParentSlug(person.motherName!)}`}
+                  to={{
+                    pathname: `/people/${findParentSlug(person.motherName!)}`,
+                    search: searchParams.toString(),
+                  }}
                   className="has-text-danger"
                 >
                   {person.motherName}
@@ -237,8 +238,13 @@ export const PeopleTable: React.FC<Props> = ({ people }) => {
             </td>
             <td>
               {person.fatherName ? (
-                <Link to={`#/people/${findParentSlug(person.fatherName!)}`}>
-                  {person.fatherName}
+                <Link
+                  to={{
+                    pathname: `/people/${findParentSlug(person.motherName!)}`,
+                    search: searchParams.toString(),
+                  }}
+                >
+                  {person.motherName}
                 </Link>
               ) : (
                 '-'
