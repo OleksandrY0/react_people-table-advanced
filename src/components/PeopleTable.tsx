@@ -19,14 +19,13 @@ export const PeopleTable: React.FC<Props> = ({ people }) => {
 
   const handleSortByName = () => {
     const params = new URLSearchParams(searchParams);
-
     const sortBy = params.get('sort');
     const orderBy = params.get('order');
 
     if (sortBy !== 'name') {
       params.set('sort', 'name');
-      params.set('order', 'asc');
-    } else if (sortBy === 'name' && orderBy !== 'desc') {
+      params.delete('order');
+    } else if (sortBy === 'name' && !orderBy) {
       params.set('order', 'desc');
     } else if (sortBy === 'name' && orderBy === 'desc') {
       params.delete('sort');
@@ -38,14 +37,13 @@ export const PeopleTable: React.FC<Props> = ({ people }) => {
 
   const handleSortBySex = () => {
     const params = new URLSearchParams(searchParams);
-
     const sortBy = params.get('sort');
     const orderBy = params.get('order');
 
     if (sortBy !== 'sex') {
       params.set('sort', 'sex');
-      params.set('order', 'asc');
-    } else if (sortBy === 'sex' && orderBy !== 'desc') {
+      params.delete('order');
+    } else if (sortBy === 'sex' && !orderBy) {
       params.set('order', 'desc');
     } else if (sortBy === 'sex' && orderBy === 'desc') {
       params.delete('sort');
@@ -57,14 +55,13 @@ export const PeopleTable: React.FC<Props> = ({ people }) => {
 
   const handleSortByBorn = () => {
     const params = new URLSearchParams(searchParams);
-
     const sortBy = params.get('sort');
     const orderBy = params.get('order');
 
     if (sortBy !== 'born') {
       params.set('sort', 'born');
-      params.set('order', 'asc');
-    } else if (sortBy === 'born' && orderBy !== 'desc') {
+      params.delete('order');
+    } else if (sortBy === 'born' && !orderBy) {
       params.set('order', 'desc');
     } else if (sortBy === 'born' && orderBy === 'desc') {
       params.delete('sort');
@@ -76,14 +73,13 @@ export const PeopleTable: React.FC<Props> = ({ people }) => {
 
   const handleSortByDied = () => {
     const params = new URLSearchParams(searchParams);
-
     const sortBy = params.get('sort');
     const orderBy = params.get('order');
 
     if (sortBy !== 'died') {
       params.set('sort', 'died');
-      params.set('order', 'asc');
-    } else if (sortBy === 'died' && orderBy !== 'desc') {
+      params.delete('order');
+    } else if (sortBy === 'died' && !orderBy) {
       params.set('order', 'desc');
     } else if (sortBy === 'died' && orderBy === 'desc') {
       params.delete('sort');
@@ -130,8 +126,11 @@ export const PeopleTable: React.FC<Props> = ({ people }) => {
   }
 
   if (queryParams) {
-    sortedPeople = sortedPeople.filter(p =>
-      p.name.toLowerCase().includes(queryParams.toLowerCase()),
+    sortedPeople = sortedPeople.filter(
+      (p: Person) =>
+        p.name.toLowerCase().includes(queryParams.toLowerCase()) ||
+        p.fatherName?.toLowerCase().includes(queryParams.toLowerCase()) ||
+        p.motherName?.toLowerCase().includes(queryParams.toLowerCase()),
     );
   }
 
@@ -211,12 +210,15 @@ export const PeopleTable: React.FC<Props> = ({ people }) => {
         {sortedPeople.map(person => (
           <tr key={person.slug} data-cy="person">
             <td>
-              <a
-                href={`#/people/${person.slug}`}
+              <Link
+                to={{
+                  pathname: `/people/${person.slug}`,
+                  search: searchParams.toString(),
+                }}
                 className={person.sex === 'f' ? 'has-text-danger' : ''}
               >
                 {person.name}
-              </a>
+              </Link>
             </td>
             <td>{person.sex}</td>
             <td>{person.born}</td>

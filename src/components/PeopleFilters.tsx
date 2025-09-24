@@ -31,23 +31,22 @@ export const PeopleFilters = () => {
 
   const handleSetCentury = (century: number | null) => {
     const params = new URLSearchParams(searchParams);
-    const current = params.get('centuries');
-    let centuries: string[] = current ? current.split(',') : [];
+    const current = params.getAll('centuries');
+    let centuries: string[] = [...current];
 
-    if (!century) {
+    if (century === null) {
       params.delete('centuries');
     } else {
-      if (centuries.includes(century.toString())) {
-        centuries = centuries.filter(c => c !== century.toString());
+      const centuryStr = century.toString();
+
+      if (centuries.includes(centuryStr)) {
+        centuries = centuries.filter(c => c !== centuryStr);
       } else {
-        centuries.push(century.toString());
+        centuries.push(centuryStr);
       }
 
-      if (centuries.length > 0) {
-        params.set('centuries', centuries.join(','));
-      } else {
-        params.delete('centuries');
-      }
+      params.delete('centuries');
+      centuries.forEach(c => params.append('centuries', c));
     }
 
     return `?${params.toString()}`;
@@ -89,8 +88,7 @@ export const PeopleFilters = () => {
                 to={handleSetCentury(c)}
                 className={classNames('button mr-1', {
                   'is-info': searchParams
-                    .get('centuries')
-                    ?.split(',')
+                    .getAll('centuries')
                     .includes(c.toString()),
                 })}
               >
@@ -104,7 +102,7 @@ export const PeopleFilters = () => {
               data-cy="centuryALL"
               to={handleSetCentury(null)}
               className={classNames('button is-outlined', {
-                'is-success': !searchParams.get('centuries'),
+                'is-success': searchParams.getAll('centuries').length === 0,
               })}
             >
               All
